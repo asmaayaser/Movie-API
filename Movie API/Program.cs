@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Movie_API.Models;
+
 namespace Movie_API
 {
     public class Program
@@ -14,6 +18,14 @@ namespace Movie_API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Custom services
+            builder.Services.AddDbContext<ApplicationDBContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -24,6 +36,8 @@ namespace Movie_API
             }
 
             app.UseHttpsRedirection();
+
+
 
             app.UseAuthorization();
 
