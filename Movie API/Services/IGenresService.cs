@@ -1,0 +1,14 @@
+﻿using Movie_API.Models;
+
+namespace Movie_API.Services
+{
+    public interface IGenresService
+    {
+        Task<IEnumerable<Genre>> GetAll();
+        Task<Genre> GetById(int id);
+        Task<Genre> Add(Genre genre);
+        Genre Update(Genre genre);
+        Genre Delete(Genre genre);
+
+    }
+}

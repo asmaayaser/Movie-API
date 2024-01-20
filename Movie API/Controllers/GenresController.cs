@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Movie_API.Dto;
 using Movie_API.Models;
+using Movie_API.Services;
 
 namespace Movie_API.Controllers
 {
@@ -10,53 +11,57 @@ namespace Movie_API.Controllers
     [ApiController]
     public class GenresController : ControllerBase
     {
-        private readonly ApplicationDBContext Context;
-        public GenresController(ApplicationDBContext context)
+        private readonly IGenresService GenresService;
+        public GenresController(IGenresService genresService)
         {
-            Context = context;
+            GenresService = genresService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var Genres = await Context.Genres.OrderBy(G=> G.Name).ToListAsync();
+            var Genres = await GenresService.GetAll();
             return Ok(Genres);
 
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var Genres = await GenresService.GetById(id);
+            return Ok(Genres);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync(GenreDto GenreDto )
         {
             var Genre = new Genre { Name = GenreDto.Name };
-            await Context.Genres.AddAsync(Genre);
-            Context.SaveChanges();
+            await GenresService.Add(Genre);
             return Ok(Genre);
-
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync( int id , [FromBody] GenreDto GenreDto)
         {
-            var Genra = await Context.Genres.FirstOrDefaultAsync(G => G.Id == id);
-            if(Genra == null) 
+            var Genra = await GenresService.GetById(id);
+            if (Genra == null) 
             {
                 return StatusCode(StatusCodes.Status404NotFound);
             }
             Genra.Name = GenreDto.Name;
-            Context.SaveChanges();
+            GenresService.Update(Genra);
             return Ok(Genra);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var Genra = await Context.Genres.FirstOrDefaultAsync(G => G.Id == id);
+            var Genra = await GenresService.GetById(id);
             if (Genra == null)
             {
                 return StatusCode(StatusCodes.Status404NotFound);
             }
-            Context.Remove(Genra);
-            Context.SaveChanges();
+            GenresService.Delete(Genra);
             return Ok(Genra);
 
         }

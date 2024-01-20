@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Movie_API.Models;
+using Movie_API.Services;
 
 namespace Movie_API
 {
@@ -16,6 +17,9 @@ namespace Movie_API
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddTransient<IGenresService, GenresService>();
+
             builder.Services.AddSwaggerGen();
 
             // Custom services
